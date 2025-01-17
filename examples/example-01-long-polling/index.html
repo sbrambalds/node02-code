@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Long Polling Example</title>
+    <script>
+        function longPolling() {
+            fetch("/events")
+                .then(response => response.text())
+                .then(data => {
+                    console.log("Data received:", data);
+                    document.body.innerHTML += "<p>" + data + "</p>";
+                    longPolling(); // Next request
+                })
+        }
+
+        document.addEventListener("DOMContentLoaded", (event) => {
+            longPolling();
+        });
+    </script>
+</head>
+<body>
+    <h1>Long Polling Example</h1>
+</body>
+</html>

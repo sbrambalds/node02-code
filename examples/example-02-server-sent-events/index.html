@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Server-Sent Events Example</title>
+    <script>
+        function setupSSE() {
+            const eventSource = new EventSource("/events");
+
+            eventSource.onmessage = function(event) {
+                console.log("Data received:", event.data);
+                document.body.innerHTML += "<p>" + event.data + "</p>";
+            };
+        }
+
+        document.addEventListener("DOMContentLoaded", (event) => {
+            setupSSE();
+        });
+    </script>
+</head>
+<body>
+    <h1>Server-Sent Events Example</h1>
+</body>
+</html>

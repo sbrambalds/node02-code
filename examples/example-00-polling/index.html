@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Polling Example</title>
+    <script>
+        function polling() {
+            fetch("/events")
+                .then(response => response.text())
+                .then(data => {
+                    console.log("Data received:", data);
+                    document.body.innerHTML += "<p>" + data + "</p>";
+                })
+        }
+
+        document.addEventListener("DOMContentLoaded", (event) => {
+            setInterval(polling, 1000); // Poll every second
+        });
+    </script>
+</head>
+<body>
+    <h1>Polling Example</h1>
+</body>
+</html>

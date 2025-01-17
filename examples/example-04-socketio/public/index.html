@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 12px Helvetica, Arial; }
+      form { background: #7088b2; padding: 3px; position: fixed; bottom: 0; width: 80%; }
+      form input { border: 0; padding: 0.5%; width: 80%; margin-right: 1%; }
+      #users { float: right; width: fit-content; height: fit-content; overflow: scroll;}
+      #connectedUsers { background: #a4b2c9; }
+      form button { width: 10%; background: #dadada; border-radius: 5px; padding: 0.5%; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #dadada; }
+      #messages { margin-bottom: 40px; float: left; }
+    </style>
+  </head>    
+  <body>
+    <div id="chat">
+      <label>Enter your name: </label>
+      <input id="nameInput" type="text" autocomplete="off" />
+      <button id="usernameButton" >Ok</button>
+      <div id="users">
+        <label>Online Users</label>
+          <table id="connectedUsers"> </table>
+      </div>
+      <ul id="messages"></ul>
+      <form>
+        <input id="textInput" type="text" autocomplete="off" disabled="true" /><button id="submit" disabled="true">Send</button>
+      </form>
+      <script src="/socket.io/socket.io.js"></script>
+      <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+      <script>
+          const socket = io();
+          let user = '';
+
+          $('#textInput').focusin((e)=>{
+            e.preventDefault();
+            socket.emit('typing', user);
+            return false;
+          });
+
+          $('#textInput').focusout((e)=>{
+            e.preventDefault();
+            socket.emit('stop typing', user);
+            return false;
+          });
+
+          $('#submit').click((e)=>{
+            e.preventDefault();
+            if ($('#textInput').val() === '') return false;
+            socket.emit('chat message', $('#textInput').val(), user);
+            $('#textInput').val('');
+            return false;
+          });
+
+          $('#usernameButton').click((e)=>{
+            e.preventDefault();
+            if ($('#nameInput').val() === '') return false;
+            $('#nameInput').attr('disabled','disabled');
+            $('#usernameButton').attr('disabled','true');
+            $('#textInput').removeAttr('disabled');
+            $('#submit').removeAttr('disabled');
+            socket.emit('new user', $('#nameInput').val());
+            user = $('#nameInput').val();
+            return false;
+          });
+
+          socket.on('typing', (usr)=>{
+            if(usr !== user) {
+              $('#messages').append($('<li id="' + usr.replaceAll(/\s/g,'') + 'typing">').text(usr + ' is typing...'));
+            }
+          });
+
+          socket.on('stop typing', (usr)=>{
+            $('#'+usr.replaceAll(/\s/g,'')+'typing').remove();
+          });
+
+          socket.on('connection', (msg, users)=>{
+            $('#messages').append($('<li>').text(msg));
+            for (let usr of users) {
+              $('#connectedUsers').append($('<tr id="'+ usr.replaceAll(/\s/g,'') +'"><td>').text(usr));
+            }
+          });
+
+          socket.on('new user', (usr)=>{
+            $('#connectedUsers').append($('<tr id="'+ usr.replaceAll(/\s/g,'') +'"><td>').text(usr));
+            if(usr === user) {
+              $('#messages').append($('<li>').text("You enter the chat"));
+            } else {
+              $('#messages').append($('<li>').text(usr + " enter the chat"));
+            }
+          });
+
+          socket.on('disconnection', (usr)=>{
+            $('#messages').append($('<li>').text(usr + " disconnected from the chat"));
+            $('#'+usr.replaceAll(/\s/g,'')).remove();
+          });
+
+          socket.on('chat message', (msg, usr)=>{ // callbacks
+            $('#messages').append($('<li>').text(usr + ': ' + msg));
+          });
+
+      </script>
+    </div>
+  </body>
+</html>
