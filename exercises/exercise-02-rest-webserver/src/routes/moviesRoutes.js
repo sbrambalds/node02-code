@@ -3,15 +3,21 @@ const movieControllers = require('../controllers/moviesControllers')
 
 const router = express.Router();
 
-router.route('/');
-
 // handle the GET for all movies
-
-// handle the POST for creating a new movie
-
-router.route('/:id');
+router.route('/').get((req, res) => { 
+    movieControllers.getAllMovies(req, res); 
+}).post((req, res) => {
+    movieControllers.addMovie(req, res);
+});
 
 // handle the GET for a single movie
+router.route('/:id').get((req, res) => {
+    movieControllers.getMovie(req, res);
+}).put((req, res) => {
+    movieControllers.updateMovie(req, res);
+});
+
+// handle the POST for creating a new movie
 
 // handle the DELETE for a single movie
 
