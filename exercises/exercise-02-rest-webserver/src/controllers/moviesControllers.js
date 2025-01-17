@@ -20,15 +20,23 @@ function addMovie(req, res) {
 
 // create logic for updating a movie
 function updateMovie(req, res) {
-    /**
-        let movie = movies.find(mv => mv.id == req.params.id);
-        movie.title = req.body.title;
-        movie.homepage = req.body.homepage;
-        movie.overview = req.body.overview;
-        movie.release_date = req.body.release_date;
-        movie.poster_path = req.body.poster_path;
-        ;
-    */
+    let index = movies.indexOf(movies.find(mv => mv.id == req.params.id));
+    if (req.body.title) {
+        movies[index].title = req.body.title;
+    }
+    if (req.body.homepage) {
+        movies[index].homepage = req.body.homepage;
+    }
+    if (req.body.overview) {
+        movies[index].overview = req.body.overview;
+    }
+    if (req.body.release_date) {
+        movies[index].release_date = req.body.release_date;
+    }
+    if (req.body.poster_path) {
+        movies[index].poster_path = req.body.poster_path;
+    }
+    res.json(movies);
 }
 
 // create logic for deleting a movie
