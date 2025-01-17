@@ -32,11 +32,17 @@ function updateMovie(req, res) {
 }
 
 // create logic for deleting a movie
+function deleteMovie(req, res) {
+    let index = movies.indexOf(movies.find(movie => movie.id == req.params.id));
+    movies.splice(index, 1);
+    res.json(movies);
+}
 
 module.exports = { 
     // export all the functions you created
     getAllMovies,
     getMovie,
     addMovie,
-    updateMovie
+    updateMovie,
+    deleteMovie
 }
